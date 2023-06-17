@@ -36,6 +36,11 @@ public class StudentController {
 		return studRepo.findByAge(age);
 	}
 
+	@GetMapping("/student/sorted/{lastName}")
+	public List<Student> getStudentByLastName(@PathVariable("lastName") String lastName) {
+		return studRepo.findByLnameSorted(lastName);
+	}
+
 	@PostMapping(path = "students")
 	public Student createStudent(@RequestBody Student studData) {
 		Optional<Student> foundStudent = studRepo.findByFirstName(studData.getFirstName());
@@ -43,20 +48,21 @@ public class StudentController {
 			throw new IllegalArgumentException(
 					"A student with the names " + studData.getFirstName() + "already exists");
 		}
-		return studRepo.save(studData);
+		return studRepo.save(studData); 
 	}
 
-	@PutMapping(path="/student/{studId}")
+	@PutMapping(path = "/student/{studId}")
 	public Student updateStudent(@PathVariable("studId") int studId, @RequestBody Student stud) {
-		Student foundStud = studRepo.findById(studId).orElseThrow(()-> new IllegalStateException("Student with ID" + studId + " is not found"));
+		Student foundStud = studRepo.findById(studId)
+				.orElseThrow(() -> new IllegalStateException("Student with ID" + studId + " is not found"));
 		foundStud.setAge(stud.getAge());
 		foundStud.setFirstName(stud.getFirstName());
 		foundStud.setLastName(stud.getLastName());
 		studRepo.save(foundStud);
-		
+
 		return foundStud;
 	}
- 
+
 	@DeleteMapping(path = "/students/{studId}")
 	public Student deleteStudent(@PathVariable("studId") int studId) {
 		Student deletedStudent = studRepo.findById(studId)
